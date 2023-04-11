@@ -8,26 +8,23 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller;
 using System.Net.Http;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Providers
-{
-    public class YTDLMovieProvider : AbstractYoutubeRemoteProvider<YTDLMovieProvider, Movie, MovieInfo>
-    {
-        public YTDLMovieProvider(
-            IFileSystem fileSystem,
-            IHttpClientFactory httpClientFactory,
-            ILogger<YTDLMovieProvider> logger,
-            IServerConfigurationManager config,
-            System.IO.Abstractions.IFileSystem afs) : base(fileSystem, httpClientFactory, logger, config, afs)
-        {
-        }
+namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
-        public override string Name => Constants.PluginName;
+public class YTDLMovieProvider : AbstractYoutubeRemoteProvider<YTDLMovieProvider, Movie, MovieInfo> {
+	public YTDLMovieProvider(
+			IFileSystem fileSystem,
+			IHttpClientFactory httpClientFactory,
+			ILogger<YTDLMovieProvider> logger,
+			IServerConfigurationManager config,
+			System.IO.Abstractions.IFileSystem afs) : base(fileSystem, httpClientFactory, logger, config, afs) {
+	}
 
-        internal override MetadataResult<Movie> GetMetadataImpl(YTDLData jsonObj, string id) => YTDLJsonToMovie(jsonObj, id);
+	public override string Name => Constants.ProviderId;
 
-        internal async override Task GetAndCacheMetadata(
-            string id,
-            IServerApplicationPaths appPaths,
-            CancellationToken cancellationToken) => await Utils.YTDLMetadata(id, appPaths, cancellationToken);
-    }
+	internal override MetadataResult<Movie> GetMetadataImpl(YTDLData jsonObj, string id) => YTDLJsonToMovie(jsonObj, id);
+
+	internal override async Task GetAndCacheMetadata(
+			string id,
+			IServerApplicationPaths appPaths,
+			CancellationToken cancellationToken) => await Utils.YTDLMetadata(id, appPaths, cancellationToken);
 }

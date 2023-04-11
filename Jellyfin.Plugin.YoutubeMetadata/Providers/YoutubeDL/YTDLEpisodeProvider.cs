@@ -8,30 +8,26 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller;
 using System.Net.Http;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Providers
-{
-    public class YTDLEpisodeProvider: AbstractYoutubeRemoteProvider<YTDLEpisodeProvider, Episode, EpisodeInfo>
-    {
-        public YTDLEpisodeProvider(
-            IFileSystem fileSystem,
-            IHttpClientFactory httpClientFactory,
-            ILogger<YTDLEpisodeProvider> logger,
-            IServerConfigurationManager config,
-            System.IO.Abstractions.IFileSystem afs) : base(fileSystem, httpClientFactory, logger, config, afs)
-        {
-        }
+namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
-        public override string Name => Constants.PluginName;
+public class YTDLEpisodeProvider : AbstractYoutubeRemoteProvider<YTDLEpisodeProvider, Episode, EpisodeInfo> {
+	public YTDLEpisodeProvider(
+			IFileSystem fileSystem,
+			IHttpClientFactory httpClientFactory,
+			ILogger<YTDLEpisodeProvider> logger,
+			IServerConfigurationManager config,
+			System.IO.Abstractions.IFileSystem afs) : base(fileSystem, httpClientFactory, logger, config, afs) {
+	}
 
-        internal override MetadataResult<Episode> GetMetadataImpl(YTDLData jsonObj, string id) => YTDLJsonToEpisode(jsonObj, id);
+	public override string Name => Constants.ProviderId;
 
-        internal async override Task GetAndCacheMetadata(
-            string id,
-            IServerApplicationPaths appPaths,
-            CancellationToken cancellationToken)
-        {
-            _logger.LogDebug("YTDLEpisodeProvider: GetAndCacheMetadata ", id);
-            await Utils.YTDLMetadata(id, appPaths, cancellationToken);
-        }
-    }
+	internal override MetadataResult<Episode> GetMetadataImpl(YTDLData jsonObj, string id) => YTDLJsonToEpisode(jsonObj, id);
+
+	internal override async Task GetAndCacheMetadata(
+			string id,
+			IServerApplicationPaths appPaths,
+			CancellationToken cancellationToken) {
+		_logger.LogDebug("YTDLEpisodeProvider: GetAndCacheMetadata ", id);
+		await Utils.YTDLMetadata(id, appPaths, cancellationToken);
+	}
 }

@@ -3,17 +3,14 @@ using MediaBrowser.Model.IO;
 using Microsoft.Extensions.Logging;
 using MediaBrowser.Controller.Entities.Movies;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Providers
-{
-    public class YoutubeLocalMovieProvider : AbstractYoutubeLocalProvider<YoutubeLocalMovieProvider, Movie>
-    {
-        public YoutubeLocalMovieProvider(IFileSystem fileSystem, ILogger<YoutubeLocalMovieProvider> logger) : base(fileSystem, logger) { }
+namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
-        public override string Name => Constants.PluginName;
+public class YoutubeLocalMovieProvider : AbstractYoutubeLocalProvider<YoutubeLocalMovieProvider, Movie> {
+    public YoutubeLocalMovieProvider(IFileSystem fileSystem, ILogger<YoutubeLocalMovieProvider> logger) : base(fileSystem, logger) { }
 
-        internal override MetadataResult<Movie> GetMetadataImpl(YTDLData jsonObj)
-        {
-            return Utils.YTDLJsonToMovie(jsonObj);
-        }
+    public override string Name => Constants.ProviderId;
+
+    internal override MetadataResult<Movie> GetMetadataImpl(YTDLData jsonObj) {
+        return Utils.YTDLJsonToMovie(jsonObj);
     }
 }

@@ -12,24 +12,20 @@ using MediaBrowser.Controller.Providers;
 using MediaBrowser.Controller.Entities.Movies;
 using System;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Tests
-{
-    public class UtilsTest
-    {
+namespace Jellyfin.Plugin.YoutubeMetadata.Tests {
+    public class UtilsTest {
         [Theory]
         [InlineData("3Blue1Brown - 20190113 - The_most_unexpected_answer_to_a_counting_puzzle [HEfHFsfGXjs].mkv", "HEfHFsfGXjs")]
         [InlineData("Foo", "")]
         [InlineData("3Blue1Brown - NA - 3Blue1Brown_-_Videos [UCYO_jab_esuFRV4b17AJtAw].info.json", "UCYO_jab_esuFRV4b17AJtAw")]
-        public void GetYTIDTest(string fn, string expected)
-        {
+        public void GetYTIDTest(string fn, string expected) {
             Assert.Equal(expected, Utils.GetYTID(fn));
 
 
         }
 
         [Fact]
-        public void CreatePersonTest()
-        {
+        public void CreatePersonTest() {
             var result = Utils.CreatePerson("3Blue1Brown", "UCYO_jab_esuFRV4b17AJtAw");
             var expected = new PersonInfo { Name = "3Blue1Brown", Type = PersonType.Director, ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "UCYO_jab_esuFRV4b17AJtAw" } } };
 
@@ -37,35 +33,31 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
             Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(result));
         }
         [Fact]
-        public void GetVideoInfoPathTest()
-        {
+        public void GetVideoInfoPathTest() {
             var mockAppPath = Mock.Of<IServerApplicationPaths>(a =>
             a.CachePath == @"\foo\bar");
-            
+
             var result = Utils.GetVideoInfoPath(mockAppPath, "id123");
             Assert.Equal(@"\foo\bar\youtubemetadata\id123\ytvideo.info.json", result);
         }
 
         [Fact]
-        public void YTDLJsonToMovieTest()
-        {
+        public void YTDLJsonToMovieTest() {
             var data = new YTDLData {
                 title = "Foo",
                 description = "Some cool movie!",
                 upload_date = "20220131",
                 uploader = "SomeGuyIKnow",
-                channel_id = "ABCDEFGHIJKLMNOPQRSTUVWX" };
+                channel_id = "ABCDEFGHIJKLMNOPQRSTUVWX"
+            };
             var result = Utils.YTDLJsonToMovie(data);
-            var person = new PersonInfo
-            {
+            var person = new PersonInfo {
                 Name = "SomeGuyIKnow",
                 ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "ABCDEFGHIJKLMNOPQRSTUVWX" } }
             };
-            var expected = new MetadataResult<Movie>
-            {
+            var expected = new MetadataResult<Movie> {
                 HasMetadata = true,
-                Item = new Movie
-                {
+                Item = new Movie {
                     Name = "Foo",
                     Overview = "Some cool movie!",
                     ProductionYear = 2022,
@@ -78,16 +70,14 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
             Assert.Equal("Foo", result.Item.Name);
             Assert.Equal("Some cool movie!", result.Item.Overview);
             Assert.Equal(2022, result.Item.ProductionYear);
-            Assert.Equal("1/31/2022 12:00:00 AM", result.Item.PremiereDate.ToString());
+            Assert.Equal("2022/01/31 12:00:00 AM", result.Item.PremiereDate.ToString());
             Assert.Equal("SomeGuyIKnow", result.People[0].Name);
             Assert.Equal("ABCDEFGHIJKLMNOPQRSTUVWX", result.People[0].ProviderIds["YoutubeMetadata"]);
         }
 
         [Fact]
-        public void YTDLJsonToMusicTest()
-        {
-            var data = new YTDLData
-            {
+        public void YTDLJsonToMusicTest() {
+            var data = new YTDLData {
                 title = "Foo",
                 description = "Some cool movie!",
                 upload_date = "20220131",
@@ -95,8 +85,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
                 channel_id = "ABCDEFGHIJKLMNOPQRSTUVWX"
             };
             var result = Utils.YTDLJsonToMusicVideo(data);
-            var person = new PersonInfo
-            {
+            var person = new PersonInfo {
                 Name = "SomeGuyIKnow",
                 ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "ABCDEFGHIJKLMNOPQRSTUVWX" } }
             };
@@ -105,16 +94,14 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
             Assert.Equal("Foo", result.Item.Name);
             Assert.Equal("Some cool movie!", result.Item.Overview);
             Assert.Equal(2022, result.Item.ProductionYear);
-            Assert.Equal("1/31/2022 12:00:00 AM", result.Item.PremiereDate.ToString());
+            Assert.Equal("2022/01/31 12:00:00 AM", result.Item.PremiereDate.ToString());
             Assert.Equal("SomeGuyIKnow", result.People[0].Name);
             Assert.Equal("ABCDEFGHIJKLMNOPQRSTUVWX", result.People[0].ProviderIds["YoutubeMetadata"]);
         }
 
         [Fact]
-        public void YTDLJsonToMusicWithTrackTest()
-        {
-            var data = new YTDLData
-            {
+        public void YTDLJsonToMusicWithTrackTest() {
+            var data = new YTDLData {
                 title = "Foo",
                 track = "Bar",
                 description = "Some cool movie!",
@@ -123,8 +110,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
                 channel_id = "ABCDEFGHIJKLMNOPQRSTUVWX"
             };
             var result = Utils.YTDLJsonToMusicVideo(data);
-            var person = new PersonInfo
-            {
+            var person = new PersonInfo {
                 Name = "SomeGuyIKnow",
                 ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "ABCDEFGHIJKLMNOPQRSTUVWX" } }
             };
@@ -133,16 +119,14 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
             Assert.Equal("Bar", result.Item.Name);
             Assert.Equal("Some cool movie!", result.Item.Overview);
             Assert.Equal(2022, result.Item.ProductionYear);
-            Assert.Equal("1/31/2022 12:00:00 AM", result.Item.PremiereDate.ToString());
+            Assert.Equal("2022/01/31 12:00:00 AM", result.Item.PremiereDate.ToString());
             Assert.Equal("SomeGuyIKnow", result.People[0].Name);
             Assert.Equal("ABCDEFGHIJKLMNOPQRSTUVWX", result.People[0].ProviderIds["YoutubeMetadata"]);
         }
 
         [Fact]
-        public void YTDLJsonToEpisodeTest()
-        {
-            var data = new YTDLData
-            {
+        public void YTDLJsonToEpisodeTest() {
+            var data = new YTDLData {
                 title = "Foo",
                 description = "Some cool movie!",
                 upload_date = "20220131",
@@ -150,8 +134,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
                 channel_id = "ABCDEFGHIJKLMNOPQRSTUVWX"
             };
             var result = Utils.YTDLJsonToEpisode(data);
-            var person = new PersonInfo
-            {
+            var person = new PersonInfo {
                 Name = "SomeGuyIKnow",
                 ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "ABCDEFGHIJKLMNOPQRSTUVWX" } }
             };
@@ -160,7 +143,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
             Assert.Equal("Foo", result.Item.Name);
             Assert.Equal("Some cool movie!", result.Item.Overview);
             Assert.Equal(2022, result.Item.ProductionYear);
-            Assert.Equal("1/31/2022 12:00:00 AM", result.Item.PremiereDate.ToString());
+            Assert.Equal("2022/01/31 12:00:00 AM", result.Item.PremiereDate.ToString());
             Assert.Equal("SomeGuyIKnow", result.People[0].Name);
             Assert.Equal("ABCDEFGHIJKLMNOPQRSTUVWX", result.People[0].ProviderIds["YoutubeMetadata"]);
             Assert.Equal("20220131-Foo", result.Item.ForcedSortName);
@@ -169,10 +152,8 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests
         }
 
         [Fact]
-        public void YTDLJsonToSeriesTest()
-        {
-            var data = new YTDLData
-            {
+        public void YTDLJsonToSeriesTest() {
+            var data = new YTDLData {
                 title = "Foo",
                 description = "Some cool movie!",
                 upload_date = "20220131",
