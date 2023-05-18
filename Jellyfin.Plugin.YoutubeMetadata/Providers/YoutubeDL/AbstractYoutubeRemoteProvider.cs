@@ -27,11 +27,11 @@ public abstract class AbstractYoutubeRemoteProvider<B, T, E> : IRemoteMetadataPr
     protected readonly IFileSystem _fileSystem;
     protected readonly System.IO.Abstractions.IFileSystem _afs;
 
-    public AbstractYoutubeRemoteProvider(IFileSystem fileSystem,
-                                         IHttpClientFactory httpClientFactory,
-                                         ILogger<B> logger,
-                                         IServerConfigurationManager config,
-                                         System.IO.Abstractions.IFileSystem afs) {
+    protected AbstractYoutubeRemoteProvider(IFileSystem fileSystem,
+                                            IHttpClientFactory httpClientFactory,
+                                            ILogger<B> logger,
+                                            IServerConfigurationManager config,
+                                            System.IO.Abstractions.IFileSystem afs) {
         _config = config;
         _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;

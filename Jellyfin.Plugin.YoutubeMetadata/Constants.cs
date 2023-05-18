@@ -1,4 +1,6 @@
-﻿namespace Jellyfin.Plugin.YoutubeMetadata;
+﻿using System.Text.RegularExpressions;
+
+namespace Jellyfin.Plugin.YoutubeMetadata;
 
 public class Constants {
     public const string PluginName = "YouTube Metadata 2 YH";
@@ -10,4 +12,8 @@ public class Constants {
 
     public const string YTCHANNEL_RE = @"(?<=\[)[a-zA-Z0-9\-_]{24}(?=\])";
     public const string YTID_RE = @"(?<=\[)[a-zA-Z0-9\-_]{11}(?=\])";
+
+    public static Regex YoutubeChannelIdRegex = new(YTCHANNEL_RE, RegexOptions.Compiled);
+    public static Regex YoutubeVideoIdRegex = new(YTID_RE, RegexOptions.Compiled);
+
 }

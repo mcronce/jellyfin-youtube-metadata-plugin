@@ -12,7 +12,7 @@ using MediaBrowser.Controller.Providers;
 using MediaBrowser.Controller.Entities.Movies;
 using System;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Tests {
+namespace Jellyfin.Plugin.YoutubeMetadata.UnitTests {
     public class UtilsTest {
         [Theory]
         [InlineData("3Blue1Brown - 20190113 - The_most_unexpected_answer_to_a_counting_puzzle [HEfHFsfGXjs].mkv", "HEfHFsfGXjs")]

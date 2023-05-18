@@ -7,79 +7,85 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.YoutubeMetadata.Providers {
-    public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvider<T>, IHasItemChangeMonitor where T : BaseItem {
-        protected readonly ILogger<B> _logger;
-        protected readonly IFileSystem _fileSystem;
+namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
-        /// <summary>
-        /// Providers name, this appears in the library metadata settings.
-        /// </summary>
-        public abstract string Name { get; }
+public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvider<T>, IHasItemChangeMonitor where T : BaseItem {
+    protected readonly ILogger<B> _logger;
+    protected readonly IFileSystem _fileSystem;
 
-        protected AbstractYoutubeLocalProvider(IFileSystem fileSystem, ILogger<B> logger) {
-            _fileSystem = fileSystem;
-            _logger = logger;
-        }
+    /// <summary>
+    /// Providers name, this appears in the library metadata settings.
+    /// </summary>
+    public abstract string Name { get; }
 
-        protected FileSystemMetadata GetInfoJson(string path) {
-            _logger.LogDebug("YTLocal GetInfoJson: {Path}", path);
-            var fileInfo = _fileSystem.GetFileSystemInfo(path);
-            var directoryInfo = fileInfo.IsDirectory ? fileInfo : _fileSystem.GetDirectoryInfo(Path.GetDirectoryName(path));
-            var directoryPath = directoryInfo.FullName;
+    protected AbstractYoutubeLocalProvider(IFileSystem fileSystem, ILogger<B> logger) {
+        _fileSystem = fileSystem;
+        _logger = logger;
+    }
 
-            var files = _fileSystem.GetFiles(directoryPath);
+    protected FileSystemMetadata GetInfoJson(string path) {
+        _logger.LogDebug("YTLocal GetInfoJson: {Path}", path);
+        var fileInfo = _fileSystem.GetFileSystemInfo(path);
+        var directoryInfo = fileInfo.IsDirectory ? fileInfo : _fileSystem.GetDirectoryInfo(Path.GetDirectoryName(path));
+        var directoryPath = directoryInfo.FullName;
 
-            var specificFile = Path.Combine(directoryPath, Path.GetFileNameWithoutExtension(path) + ".info.json");
+        var files = _fileSystem.GetFiles(directoryPath);
 
-            var file = _fileSystem.GetFileInfo(specificFile);
+        var specificFile = Path.Combine(directoryPath, Path.GetFileNameWithoutExtension(path) + ".info.json");
 
-            if (!file.Exists) {
-                var infoFiles = files.Where(a => a.Name.EndsWith(".info.json")).ToArray();
+        var file = _fileSystem.GetFileInfo(specificFile);
 
-                if (infoFiles.Length == 1) {
-                    return infoFiles[0];
-                }
-            }
-
+        if (file.Exists) {
+            _logger.LogInformation("Found info file of the same name as containing folder {FileName}", file.Name);
             return file;
         }
 
-        /// <summary>
-        /// Returns boolean if item has changed since last recorded.
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="directoryService"></param>
-        /// <returns></returns>
-        public bool HasChanged(BaseItem item, IDirectoryService directoryService) {
-            _logger.LogDebug("YTLocal HasChanged: {Name}", item.Name);
-            var infoJson = GetInfoJson(item.Path);
-            var result = infoJson.Exists && _fileSystem.GetLastWriteTimeUtc(infoJson) < item.DateLastSaved;
-            _logger.LogDebug("YTLocal HasChanged Result: {Result}", result);
-            return result;
+        var infoFiles = files.Where(a => a.Name.EndsWith(".info.json")).ToArray();
+
+        if (infoFiles.Length == 1) {
+            _logger.LogInformation("Found info file {FileName} within {Directory}", infoFiles[0].Name, directoryPath);
+            return infoFiles[0];
         }
+        _logger.LogInformation("No .info.json Found in {Directory}", directoryPath);
 
-        /// <summary>
-        /// Retrieves metadata of item.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="directoryService"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task<MetadataResult<T>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
-            _logger.LogDebug("YTLocal GetMetadata: {Path}", info.Path);
-            var result = new MetadataResult<T>();
-            var infoFile = Path.ChangeExtension(info.Path, "info.json");
-            if (File.Exists(infoFile)) {
-                return Task.FromResult(result);
-            }
-            var jsonObj = Utils.ReadYTDLInfo(infoFile, cancellationToken);
-            _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
-            result = this.GetMetadataImpl(jsonObj);
+        return file;
+    }
 
+    /// <summary>
+    /// Returns boolean if item has changed since last recorded.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="directoryService"></param>
+    /// <returns></returns>
+    public bool HasChanged(BaseItem item, IDirectoryService directoryService) {
+        _logger.LogDebug("YTLocal HasChanged: {Name}", item.Name);
+        var infoJson = GetInfoJson(item.Path);
+        var result = infoJson.Exists && _fileSystem.GetLastWriteTimeUtc(infoJson) < item.DateLastSaved;
+        _logger.LogDebug("YTLocal HasChanged Result: {Result}", result);
+        return result;
+    }
+
+    /// <summary>
+    /// Retrieves metadata of item.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="directoryService"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<MetadataResult<T>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
+        _logger.LogDebug("YTLocal GetMetadata: {Path}", info.Path);
+        var result = new MetadataResult<T>();
+
+        var infoFile = GetInfoJson(info.Path);
+        if (!infoFile.Exists) {
             return Task.FromResult(result);
         }
+        var jsonObj = Utils.ReadYTDLInfo(infoFile.FullName, cancellationToken);
+        _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
+        result = this.GetMetadataImpl(jsonObj);
 
-        internal abstract MetadataResult<T> GetMetadataImpl(YTDLData jsonObj);
+        return Task.FromResult(result);
     }
+
+    internal abstract MetadataResult<T> GetMetadataImpl(YTDLData jsonObj);
 }

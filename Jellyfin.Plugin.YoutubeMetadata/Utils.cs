@@ -20,6 +20,7 @@ public class Utils {
         if (fileInfo.Exists && DateTime.UtcNow.Subtract(fileInfo.LastWriteTimeUtc).Days <= 10) {
             return true;
         }
+
         return false;
     }
 
@@ -42,10 +43,10 @@ public class Utils {
     /// <param name="name"></param>
     /// <param name="channel_id"></param>
     /// <returns></returns>
-    public static PersonInfo CreatePerson(string name, string channel_id) {
+    public static PersonInfo CreatePerson(string name, string channel_id, string personType = PersonType.Director) {
         return new() {
             Name = name,
-            Type = PersonType.Director,
+            Type = personType,
             ProviderIds = new() {
                         { Constants.ProviderId, channel_id }
                 },
@@ -181,7 +182,8 @@ public class Utils {
         }
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
-        result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id));
+        result.AddPerson(CreatePerson(json.uploader, json.channel_id));
+        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonType.Actor));
         return result;
     }
 
