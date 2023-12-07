@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,10 +40,9 @@ public class YTDLImageProvider : IRemoteImageProvider, IHasOrder {
     /// <param name="item"></param>
     /// <returns></returns>
     public IEnumerable<ImageType> GetSupportedImages(BaseItem item) {
-        return new List<ImageType>
-        {
-                ImageType.Primary,
-                ImageType.Disc
+        return new List<ImageType> {
+            ImageType.Primary,
+            ImageType.Disc
         };
     }
 
@@ -73,7 +72,7 @@ public class YTDLImageProvider : IRemoteImageProvider, IHasOrder {
             _logger.LogDebug("YTDLImage GetImages: Creating RemoteImageInfo for {ID}", id);
             result.Add(new RemoteImageInfo {
                 ProviderName = Name,
-                Url = video.thumbnails[^1].url,
+                Url = video.thumbnail,
                 Type = ImageType.Primary
             });
         }
