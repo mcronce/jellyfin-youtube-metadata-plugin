@@ -80,9 +80,12 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
         if (!infoFile.Exists) {
             return Task.FromResult(result);
         }
+
         var jsonObj = Utils.ReadYTDLInfo(infoFile.FullName, cancellationToken);
-        _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
-        result = this.GetMetadataImpl(jsonObj);
+        if (jsonObj != null) {
+            _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
+            result = this.GetMetadataImpl(jsonObj);
+        }
 
         return Task.FromResult(result);
     }

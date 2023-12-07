@@ -156,8 +156,12 @@ public class Utils {
     /// <returns></returns>
     public static YTDLData ReadYTDLInfo(string fpath, CancellationToken cancellationToken) {
         cancellationToken.ThrowIfCancellationRequested();
-        string jsonString = File.ReadAllText(fpath);
-        return JsonSerializer.Deserialize<YTDLData>(jsonString);
+        if (!File.Exists(fpath)){
+            return null;
+        } else {
+            string jsonString = File.ReadAllText(fpath);
+            return JsonSerializer.Deserialize<YTDLData>(jsonString);
+        }
     }
 
     /// <summary>
