@@ -80,8 +80,11 @@ public class Utils {
         if (File.Exists(cookie_file)) {
             ytd.Options.FilesystemOptions.Cookies = cookie_file;
         }
-        var task = ytd.DownloadAsync(url);
-        await task;
+        try {
+            await ytd.DownloadAsync(url);
+        } catch(System.IO.FileNotFoundException e) {
+            throw new YoutubeDlMissingException("", e);
+        }
         if (ytdl_out.Count > 0) {
             Uri uri = new Uri(ytdl_out[0]);
             return uri.Segments[uri.Segments.Length - 1];
@@ -102,7 +105,11 @@ public class Utils {
         if (File.Exists(cookie_file)) {
             ytd.Options.FilesystemOptions.Cookies = cookie_file;
         }
-        await task;
+        try {
+            await task;
+        } catch(System.IO.FileNotFoundException e) {
+            throw new YoutubeDlMissingException("", e);
+        }
 
         foreach (string err in ytdl_errs) {
             var match = Regex.Match(err, @".*The playlist does not exist\..*");
@@ -125,8 +132,11 @@ public class Utils {
         }
         List<string> ytdl_errs = new();
         ytd.StandardErrorEvent += (sender, error) => ytdl_errs.Add(error);
-        var task = ytd.DownloadAsync(String.Format(Constants.ChannelUrl, id));
-        await task;
+        try {
+            await ytd.DownloadAsync(String.Format(Constants.ChannelUrl, id));
+        } catch(System.IO.FileNotFoundException e) {
+            throw new YoutubeDlMissingException("", e);
+        }
     }
     public static async Task YTDLMetadata(string id, IServerApplicationPaths appPaths, CancellationToken cancellationToken) {
         //var foo = await ValidCookie(appPaths, cancellationToken);
@@ -145,8 +155,11 @@ public class Utils {
 
         List<string> ytdl_errs = new();
         ytd.StandardErrorEvent += (sender, error) => ytdl_errs.Add(error);
-        var task = ytd.DownloadAsync(dlstring);
-        await task;
+        try {
+            await ytd.DownloadAsync(dlstring);
+        } catch(System.IO.FileNotFoundException e) {
+            throw new YoutubeDlMissingException("", e);
+        }
     }
     /// <summary>
     /// Reads JSON data from file.
@@ -287,3 +300,10 @@ public class Utils {
         return result;
     }
 }
+
+public class YoutubeDlMissingException: Exception {
+    public YoutubeDlMissingException() {}
+    public YoutubeDlMissingException(string message): base(message) {}
+    public YoutubeDlMissingException(string message, Exception inner): base(message, inner) {}
+}
+
