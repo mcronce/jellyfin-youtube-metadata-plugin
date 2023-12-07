@@ -188,6 +188,12 @@ public class Utils {
         result.Item.PremiereDate = date;
         result.AddPerson(CreatePerson(json.uploader, json.channel_id));
         result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonType.Actor));
+
+        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
+            result.Item.ProviderIds.Remove(Constants.ProviderId);
+        }
+        result.Item.ProviderIds.Add(Constants.ProviderId, json.id);
+
         return result;
     }
 
@@ -216,6 +222,12 @@ public class Utils {
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
         result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id));
+
+        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
+            result.Item.ProviderIds.Remove(Constants.ProviderId);
+        }
+        result.Item.ProviderIds.Add(Constants.ProviderId, json.id);
+
         return result;
     }
 
@@ -245,6 +257,12 @@ public class Utils {
         result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id));
         result.Item.IndexNumber = 1;
         result.Item.ParentIndexNumber = 1;
+
+        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
+            result.Item.ProviderIds.Remove(Constants.ProviderId);
+        }
+        result.Item.ProviderIds.Add(Constants.ProviderId, json.id);
+
         return result;
     }
     /// <summary>
@@ -260,7 +278,12 @@ public class Utils {
         };
         result.Item.Name = json.uploader;
         result.Item.Overview = json.description;
-        result.Item.ProviderIds.Add(Constants.ProviderId, json.channel_id);
+
+        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
+            result.Item.ProviderIds.Remove(Constants.ProviderId);
+        }
+        result.Item.ProviderIds.Add(Constants.ProviderId, String.IsNullOrEmpty(json.channel_id) ? json.uploader_id : json.channel_id);
+
         return result;
     }
 }

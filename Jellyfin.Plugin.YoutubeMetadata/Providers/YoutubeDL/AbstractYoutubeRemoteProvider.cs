@@ -45,48 +45,29 @@ public abstract class AbstractYoutubeRemoteProvider<B, T, E> : IRemoteMetadataPr
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public static MetadataResult<Movie> YTDLJsonToMovie(YTDLData json, string id) {
-        var result = Utils.YTDLJsonToMovie(json);
-        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
-            result.Item.ProviderIds.Remove(Constants.ProviderId);
-        }
-        result.Item.ProviderIds.Add(Constants.ProviderId, id);
-        return result;
-    }
+    public static MetadataResult<Movie> YTDLJsonToMovie(YTDLData json, string id) => Utils.YTDLJsonToMovie(json);
 
     /// <summary>
     /// Provides a MusicVideo Metadata Result from a json object.
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public static MetadataResult<MusicVideo> YTDLJsonToMusicVideo(YTDLData json, string id) {
-        var result = Utils.YTDLJsonToMusicVideo(json);
-        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
-            result.Item.ProviderIds.Remove(Constants.ProviderId);
-        }
-        result.Item.ProviderIds.Add(Constants.ProviderId, id);
-        return result;
-    }
+    public static MetadataResult<MusicVideo> YTDLJsonToMusicVideo(YTDLData json, string id) => Utils.YTDLJsonToMusicVideo(json);
 
     /// <summary>
     /// Provides a Episode Metadata Result from a json object.
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public static MetadataResult<Episode> YTDLJsonToEpisode(YTDLData json, string id) {
-        var result = Utils.YTDLJsonToEpisode(json);
-        if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
-            result.Item.ProviderIds.Remove(Constants.ProviderId);
-        }
-        result.Item.ProviderIds.Add(Constants.ProviderId, id);
-        return result;
-    }
+    public static MetadataResult<Episode> YTDLJsonToEpisode(YTDLData json, string id) => Utils.YTDLJsonToEpisode(json);
+
     public static bool IsFresh(MediaBrowser.Model.IO.FileSystemMetadata fileInfo) {
         if (fileInfo.Exists && DateTime.UtcNow.Subtract(fileInfo.LastWriteTimeUtc).Days <= 10) {
             return true;
         }
         return false;
     }
+
     /// <summary>
     /// Returns path to where metadata json file should be.
     /// </summary>
