@@ -48,8 +48,8 @@ public class Utils {
             Name = name,
             Type = personType,
             ProviderIds = new() {
-                        { Constants.ProviderId, channel_id }
-                },
+                { Constants.ProviderId, channel_id }
+            },
         };
     }
 

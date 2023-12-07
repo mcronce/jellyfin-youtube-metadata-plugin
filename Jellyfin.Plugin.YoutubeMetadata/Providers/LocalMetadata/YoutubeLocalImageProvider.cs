@@ -29,11 +29,12 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
     private string GetSeriesInfo(string path) {
         _logger.LogDebug("YTLocalImage GetSeriesInfo: {Path}", path);
         Matcher matcher = new();
+        Regex rx = new Regex(Constants.YTID_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         matcher.AddInclude("*.jpg");
         matcher.AddInclude("*.webp");
         string infoPath = "";
         foreach (string file in matcher.GetResultsInFullPath(path)) {
-            if (Regex.Match(file, Constants.YTID_RE).Success) {
+            if (rx.IsMatch(file)) {
                 infoPath = file;
                 break;
             }
@@ -54,9 +55,6 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
         if (String.IsNullOrEmpty(jpgPath)) {
             return list;
         }
-        if (String.IsNullOrEmpty(jpgPath)) {
-            return list;
-        }
         var localimg = new LocalImageInfo();
         var fileInfo = _fileSystem.GetFileSystemInfo(jpgPath);
         localimg.FileInfo = fileInfo;
@@ -69,6 +67,5 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public bool Supports(BaseItem item)
-        => item is Movie || item is Episode || item is MusicVideo;
+    public bool Supports(BaseItem item) => item is Movie || item is Episode || item is MusicVideo;
 }

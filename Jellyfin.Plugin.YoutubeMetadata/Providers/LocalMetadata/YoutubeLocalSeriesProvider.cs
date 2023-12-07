@@ -1,4 +1,4 @@
-﻿using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.IO;
@@ -26,9 +26,10 @@ public class YoutubeLocalSeriesProvider : ILocalMetadataProvider<Series>, IHasIt
         _logger.LogDebug("YTLocalSeries GetSeriesInfo: {Path}", path);
         Matcher matcher = new();
         matcher.AddInclude("**/*.info.json");
+        Regex rx = new Regex(Constants.YTCHANNEL_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         string infoPath = "";
         foreach (string file in matcher.GetResultsInFullPath(path)) {
-            if (Regex.Match(file, Constants.YTCHANNEL_RE).Success) {
+            if (rx.IsMatch(file)) {
                 infoPath = file;
                 break;
             }
