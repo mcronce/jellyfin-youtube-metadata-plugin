@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller;
@@ -43,13 +45,31 @@ public class YTDLSeriesProvider : AbstractYoutubeRemoteProvider<YTDLSeriesProvid
             return result;
         }
         var ytPath = GetVideoInfoPath(this._config.ApplicationPaths, name);
+        _logger.LogDebug("YTDLSeries GetMetadata: path: {Path} ", ytPath);
         var fileInfo = _fileSystem.GetFileSystemInfo(ytPath);
         _logger.LogDebug("YTDLSeries GetMetadata: FileInfo: {Path} ", fileInfo.Name);
-        if (!IsFresh(fileInfo)) {
-            _logger.LogDebug("YTDLSeries GetMetadata: {info.Name} is not fresh.", fileInfo.Name);
-            await this.GetAndCacheMetadata(name, this._config.ApplicationPaths, cancellationToken);
+
+        YTDLData video = null;
+        try {
+            if (!IsFresh(fileInfo)) {
+                _logger.LogDebug("YTDLSeries GetMetadata: {info.Name} is not fresh.", fileInfo.Name);
+                await this.GetAndCacheMetadata(name, this._config.ApplicationPaths, cancellationToken);
+            }
+            video = Utils.ReadYTDLInfo(ytPath, cancellationToken);
+        } catch(YoutubeDlMissingException) {
+            _logger.LogWarning("YTDLSeries::GetMetadata():  Failed to download metadata for {Name}", name);
+            foreach(var file in Directory.EnumerateFiles(info.Path, "*.info.json", SearchOption.AllDirectories)) {
+                try {
+                    video = Utils.ReadYTDLInfo(file, cancellationToken);
+                    _logger.LogInformation("YTDLSeries::GetMetadata():  Read metadata from {file} as backup", file);
+                    break;
+                } catch(Exception e) {
+                    _logger.LogError("YTDLSeries::GetMetadata():  Failed to read metadata from {file}: {e}", file, e);
+                }
+            }
         }
-        var video = Utils.ReadYTDLInfo(ytPath, cancellationToken);
+        _logger.LogDebug("YTDLSeries::GetMetadata():  video = {video}", video);
+
         if (video != null) {
             try {
                 result = this.GetMetadataImpl(video, video.channel_id);
@@ -60,11 +80,17 @@ public class YTDLSeriesProvider : AbstractYoutubeRemoteProvider<YTDLSeriesProvid
                 _logger.LogError(video.title);
                 _logger.LogError(e.Message);
             }
+        } else {
+            _logger.LogError("YTDLSeries::GetMetadata():  Failed to find metadata for {name}", name);
         }
         return result;
     }
 
-    internal override MetadataResult<Series> GetMetadataImpl(YTDLData jsonObj, string id) => Utils.YTDLJsonToSeries(jsonObj);
+    internal override MetadataResult<Series> GetMetadataImpl(YTDLData jsonObj, string id) {
+        var result = Utils.YTDLJsonToSeries(jsonObj);
+        _logger.LogDebug("YTDLSeries::GetMetadataImpl():  Show {Name} got provider {Provider}", result.Item.Name, result.Item.ProviderIds[Constants.ProviderId]);
+        return result;
+    }
 
     internal override async Task GetAndCacheMetadata(
             string name,
