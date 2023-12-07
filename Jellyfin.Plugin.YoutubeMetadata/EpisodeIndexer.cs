@@ -114,18 +114,48 @@ public class EpisodeIndexer : ILibraryPostScanTask, IScheduledTask {
 
                     return DateTime.Compare(x.PremiereDate.Value, y.PremiereDate.Value);
                 });
-                var eindex = 1;
-                foreach (var episode in episodes) {
-                    if (episode.PremiereDate.HasValue) {
-                        _logger.LogDebug("Episode [{Name} - {Date:MM/dd/yyyy}] should now be index {Index}", episode.Name, episode.PremiereDate, eindex);
+
+                var should_use_date = true;
+                foreach(var episode in episodes) {
+                    if(!episode.PremiereDate.HasValue) {
+                        _logger.LogInformation("Episode {name} does not have a premiere date; using simple indexing for season {season}", episode.Name, season.Name);
+                        should_use_date = false;
                     }
-                    else {
-                        _logger.LogDebug("Episode {Name} should now be index {Index}", episode.Name, eindex);
+                }
+
+                if(should_use_date) {
+                    var index_for_date = 0;
+                    DateTime? most_recent_date = null;
+                    foreach (var episode in episodes) {
+                        if(episode.PremiereDate == most_recent_date) {
+                            index_for_date++;
+                            _logger.LogDebug("Episode [{Name}] already had one aired on the same date; incrementing index to {index_for_date}", episode.Name, index_for_date);
+                        } else {
+                            index_for_date = 0;
+                            most_recent_date = episode.PremiereDate;
+                        }
+
+                        var eindex = (episode.PremiereDate.Value.Month * 1000) + (episode.PremiereDate.Value.Day * 10) + index_for_date;
+
+                        episode.IndexNumber = eindex;
+                        episode.ParentIndexNumber = episode.PremiereDate.Value.Year;
+
+                        _logger.LogInformation("Episode [{Name} - {Date:MM/dd/yyyy}] should now be season {season} episode {Index}", episode.Name, episode.PremiereDate, episode.ParentIndexNumber, episode.IndexNumber);
+                        await _libmanager.UpdateItemAsync(episode, season, ItemUpdateType.MetadataEdit, cancellationToken);
                     }
-                    episode.IndexNumber = eindex;
-                    episode.ParentIndexNumber = sindex;
-                    await _libmanager.UpdateItemAsync(episode, season, ItemUpdateType.MetadataEdit, cancellationToken);
-                    eindex++;
+                } else {
+                    var eindex = 1;
+                    foreach(var episode in episodes) {
+                        if (episode.PremiereDate.HasValue) {
+                            _logger.LogInformation("Episode [{Name} - {Date:MM/dd/yyyy}] should now be index {Index}", episode.Name, episode.PremiereDate, eindex);
+                        } else {
+                            _logger.LogInformation("Episode {Name} should now be index {Index}", episode.Name, eindex);
+                        }
+                        episode.IndexNumber = eindex;
+                        episode.ParentIndexNumber = sindex;
+                        await _libmanager.UpdateItemAsync(episode, season, ItemUpdateType.MetadataEdit, cancellationToken);
+                        eindex++;
+                    }
                 }
                 sindex++;
             }
