@@ -1,4 +1,5 @@
 ﻿using Xunit;
+using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.YoutubeMetadata;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Model.Entities;
@@ -27,8 +28,8 @@ namespace Jellyfin.Plugin.YoutubeMetadata.UnitTests {
 
         [Fact]
         public void CreatePersonTest() {
-            var result = Utils.CreatePerson("3Blue1Brown", "UCYO_jab_esuFRV4b17AJtAw");
-            var expected = new PersonInfo { Name = "3Blue1Brown", Type = PersonType.Director, ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "UCYO_jab_esuFRV4b17AJtAw" } } };
+            var result = Utils.CreatePerson("3Blue1Brown", "UCYO_jab_esuFRV4b17AJtAw", PersonKind.Director);
+            var expected = new PersonInfo { Name = "3Blue1Brown", Type = PersonKind.Director, ProviderIds = new Dictionary<string, string> { { "YoutubeMetadata", "UCYO_jab_esuFRV4b17AJtAw" } } };
 
 
             Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(result));

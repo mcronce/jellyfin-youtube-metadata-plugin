@@ -1,4 +1,5 @@
 using MediaBrowser.Controller.Providers;
+using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.YoutubeMetadata.Providers;
 using Xunit;
 using Moq;
@@ -140,7 +141,7 @@ public class YTDLEpisodeProviderTest {
                                     },
                                     People = new() {new() {
                                             Name = "ankenyr",
-                                            Type = PersonType.Director,
+                                            Type = PersonKind.Director,
                                             ProviderIds = new() { { "YoutubeMetadata", "abc123" } } }
                                     }
                             }
@@ -169,7 +170,7 @@ public class YTDLEpisodeProviderTest {
                                     },
                                     People = new() {new() {
                                             Name = "ankenyr",
-                                            Type = PersonType.Director,
+                                            Type = PersonKind.Director,
                                             ProviderIds = new() { { "YoutubeMetadata", "abc123" } } }
                                     }
                             }
@@ -207,7 +208,7 @@ public class YTDLEpisodeProviderTest {
                                     },
                                     People = new() {new() {
                                             Name = "ankenyr",
-                                            Type = PersonType.Director,
+                                            Type = PersonKind.Director,
                                             ProviderIds = new() { { "YoutubeMetadata", "abc123" } } }
                                     }
                             }

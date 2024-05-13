@@ -1,4 +1,5 @@
-﻿using MediaBrowser.Controller;
+﻿using Jellyfin.Data.Enums;
+using MediaBrowser.Controller;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
@@ -43,7 +44,7 @@ public class Utils {
     /// <param name="name"></param>
     /// <param name="channel_id"></param>
     /// <returns></returns>
-    public static PersonInfo CreatePerson(string name, string channel_id, string personType = PersonType.Director) {
+    public static PersonInfo CreatePerson(string name, string channel_id, PersonKind personType) {
         return new() {
             Name = name,
             Type = personType,
@@ -199,8 +200,8 @@ public class Utils {
         }
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
-        result.AddPerson(CreatePerson(json.uploader, json.channel_id));
-        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonType.Actor));
+        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonKind.Director));
+        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonKind.Actor));
 
         if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
             result.Item.ProviderIds.Remove(Constants.ProviderId);
@@ -234,7 +235,7 @@ public class Utils {
         }
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
-        result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id));
+        result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id, PersonKind.Director));
 
         if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
             result.Item.ProviderIds.Remove(Constants.ProviderId);
@@ -267,7 +268,7 @@ public class Utils {
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
         result.Item.ForcedSortName = date.ToString("yyyyMMdd") + "-" + result.Item.Name;
-        result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id));
+        result.AddPerson(Utils.CreatePerson(json.uploader, json.channel_id, PersonKind.Director));
         result.Item.IndexNumber = 1;
         result.Item.ParentIndexNumber = 1;
 
