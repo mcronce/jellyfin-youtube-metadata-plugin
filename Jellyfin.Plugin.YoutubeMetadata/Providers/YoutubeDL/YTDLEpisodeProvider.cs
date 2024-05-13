@@ -27,7 +27,7 @@ public class YTDLEpisodeProvider : AbstractYoutubeRemoteProvider<YTDLEpisodeProv
 			string id,
 			IServerApplicationPaths appPaths,
 			CancellationToken cancellationToken) {
-		_logger.LogDebug("YTDLEpisodeProvider: GetAndCacheMetadata ", id);
+		_logger.LogDebug("YTDLEpisodeProvider: GetAndCacheMetadata {ID}", id);
 		await Utils.YTDLMetadata(id, appPaths, cancellationToken);
 	}
 }
