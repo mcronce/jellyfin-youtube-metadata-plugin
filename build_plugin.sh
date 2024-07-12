@@ -33,28 +33,18 @@
 #
 
 MY=$(dirname $(realpath -s "${0}"))
-OUR="S:\Repo\Homelab\JellyFin\JMiles42-Jellyfin-Plugins"
 JPRM="jprm"
 
-DEFAULT_REPO_DIR="${OUR}"
-
 PLUGIN=${1:-${PLUGIN:-.}}
-
-meta_version=$(grep -Po '^ *version: * "*\K[^"$]+' "${PLUGIN}/build.yaml")
-
-VERSION="${meta_version}"
-
-DEFAULT_REPO_URL="https://github.com/JMiles42/jellyfin-youtube-metadata-plugin/releases/download/v${VERSION}"
-JELLYFIN_REPO=${JELLYFIN_REPO:-${DEFAULT_REPO_DIR}}
-JELLYFIN_REPO_URL=${JELLYFIN_REPO_URL:-${DEFAULT_REPO_URL}}
-
 
 ARTIFACT_DIR=${ARTIFACT_DIR:-"${MY}/artifacts"}
 mkdir -p "${ARTIFACT_DIR}"
 
+meta_version=$(grep -Po '^ *version: * "*\K[^"$]+' "${PLUGIN}/build.yaml")
+
 find "${PLUGIN}" -name project.assets.json -exec rm -v '{}' ';'
 
-zipfile=$($JPRM --verbosity=debug plugin build "${PLUGIN}" --output="${ARTIFACT_DIR}" --version="${VERSION}") && {
-    $JPRM --verbosity=debug repo add --url=${JELLYFIN_REPO_URL} "${JELLYFIN_REPO}" "${zipfile}"
+zipfile=$($JPRM --verbosity=debug plugin build "${PLUGIN}" --output="${ARTIFACT_DIR}" --version="${meta_version}") && {
+    $JPRM --verbosity=debug repo add --url=https://raw.githubusercontent.com/ankenyr/jellyfin-plugin-repo/master/ "/workspaces/jellyfin-plugin-repo/" "${zipfile}"
 }
 exit $?

@@ -3,7 +3,6 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.Entities;
 using NYoutubeDL;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Data.Enums;
 
 namespace Jellyfin.Plugin.YoutubeMetadata;
 
@@ -34,7 +34,7 @@ public class Utils {
         if (!match.Success) {
             match = Regex.Match(name, Constants.YTCHANNEL_RE);
         }
-        return match.Value;
+        return match.Groups["id"].Value;
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class Utils {
     /// <param name="name"></param>
     /// <param name="channel_id"></param>
     /// <returns></returns>
-    public static PersonInfo CreatePerson(string name, string channel_id, string personType = PersonType.Director) {
+    public static PersonInfo CreatePerson(string name, string channel_id, PersonKind personType = PersonKind.Director) {
         return new() {
             Name = name,
             Type = personType,
@@ -200,7 +200,7 @@ public class Utils {
         result.Item.ProductionYear = date.Year;
         result.Item.PremiereDate = date;
         result.AddPerson(CreatePerson(json.uploader, json.channel_id));
-        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonType.Actor));
+        result.AddPerson(CreatePerson(json.uploader, json.channel_id, PersonKind.Actor));
 
         if (result.Item.ProviderIds.ContainsKey(Constants.ProviderId)) {
             result.Item.ProviderIds.Remove(Constants.ProviderId);
