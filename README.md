@@ -51,7 +51,7 @@ RUN python3 -m pip install -U yt-dlp
 1. In the top menu, click `Repositories`.
 1. Click the `+` icon to add a new repository.
 1. `Repository Name` can be anything.
-1. `URL` must be `https://raw.githubusercontent.com/ankenyr/jellyfin-plugin-repo/master/manifest.json`
+1. `URL` must be `https://raw.githubusercontent.com/mcronce/jellyfin-plugin-repo/master/manifest.json`
 1. If done correctly you should see a new repository on the page.
 1. In the top menu, navigate to `Catalog`.
 1. Under the `Metadata` section click on `YoutubeMetadata`.
@@ -61,7 +61,7 @@ RUN python3 -m pip install -U yt-dlp
 1. If successful, you will see `YoutubeMetadata` with status as `Active`
 
 ### Manual Installation (Hard)
-1. Navigate to the [releases page](https://github.com/ankenyr/jellyfin-youtube-metadata-plugin/releases).
+1. Navigate to the [releases page](https://github.com/mcronce/jellyfin-youtube-metadata-plugin/releases).
 1. Download the latest zip file.
 1. Unzip contents into `<jellyfin data directory>/plugins/YoutubeMetadata`.
 1. Restart Jellyfin.
