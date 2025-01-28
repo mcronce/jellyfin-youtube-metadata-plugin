@@ -47,9 +47,11 @@ public class Utils {
         return new() {
             Name = name,
             Type = personType,
-            ProviderIds = new() {
-                { Constants.ProviderId, channel_id }
-            },
+            ProviderIds = channel_id is null
+                ? new Dictionary<string, string> {}
+                : new Dictionary<string, string> { 
+                    { Constants.ProviderId, channel_id }
+                },
         };
     }
 
