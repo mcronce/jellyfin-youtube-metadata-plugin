@@ -75,10 +75,12 @@ public class YTDLSeriesProvider : AbstractYoutubeRemoteProvider<YTDLSeriesProvid
                 result = this.GetMetadataImpl(video, video.channel_id);
             }
             catch (System.ArgumentException e) {
-                _logger.LogError("YTDLSeries GetMetadata: Error parsing json: ");
-                _logger.LogError(video.ToString());
-                _logger.LogError(video.title);
-                _logger.LogError(e.Message);
+                _logger.LogError(
+                    e,
+                    "YTDLSeries GetMetadata: Error parsing json:  {Video} {Title}",
+                    video.ToString(),
+                    video.title
+                );
             }
         } else {
             _logger.LogError("YTDLSeries::GetMetadata():  Failed to find metadata for {name}", name);
@@ -107,8 +109,10 @@ public class YTDLSeriesProvider : AbstractYoutubeRemoteProvider<YTDLSeriesProvid
         }
 
     }
+
     public override Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken) {
         _logger.LogDebug("YTDLSeries GetImageResponse: {URL}", url);
         return _httpClientFactory.CreateClient(Constants.ProviderId).GetAsync(url, cancellationToken);
     }
 }
+
