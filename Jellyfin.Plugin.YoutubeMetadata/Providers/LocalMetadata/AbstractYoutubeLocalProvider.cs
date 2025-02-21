@@ -58,10 +58,9 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
     /// <param name="directoryService"></param>
     /// <returns></returns>
     public bool HasChanged(BaseItem item, IDirectoryService directoryService) {
-        _logger.LogDebug("YTLocal HasChanged: {Name}", item.Name);
         var infoJson = GetInfoJson(item.Path);
-        var result = infoJson.Exists && _fileSystem.GetLastWriteTimeUtc(infoJson) < item.DateLastSaved;
-        _logger.LogDebug("YTLocal HasChanged Result: {Result}", result);
+        var filetime = _fileSystem.GetLastWriteTimeUtc(infoJson);
+        var result = infoJson.Exists && filetime > item.DateLastSaved;
         return result;
     }
 
