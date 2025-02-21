@@ -36,7 +36,7 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
         var file = _fileSystem.GetFileInfo(specificFile);
 
         if (file.Exists) {
-            _logger.LogInformation("Found info file of the same name as containing folder {FileName}", file.Name);
+            _logger.LogInformation("Found info file of the same name in containing folder {FileName}", file.Name);
             return file;
         }
 
