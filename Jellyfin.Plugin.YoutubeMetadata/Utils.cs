@@ -228,8 +228,7 @@ public class Utils {
         var date = new DateTime(1970, 1, 1);
         try {
             date = DateTime.ParseExact(json.upload_date, "yyyyMMdd", null);
-        }
-        catch {
+        } catch {
 
         }
         result.Item.ProductionYear = date.Year;
@@ -260,8 +259,7 @@ public class Utils {
         var date = new DateTime(1970, 1, 1);
         try {
             date = DateTime.ParseExact(json.upload_date, "yyyyMMdd", null);
-        }
-        catch {
+        } catch {
 
         }
         result.Item.ProductionYear = date.Year;
