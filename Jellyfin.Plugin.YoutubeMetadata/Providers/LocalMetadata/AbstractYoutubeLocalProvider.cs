@@ -29,8 +29,6 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
         var directoryInfo = fileInfo.IsDirectory ? fileInfo : _fileSystem.GetDirectoryInfo(Path.GetDirectoryName(path));
         var directoryPath = directoryInfo.FullName;
 
-        var files = _fileSystem.GetFiles(directoryPath);
-
         var specificFile = Path.Combine(directoryPath, Path.GetFileNameWithoutExtension(path) + ".info.json");
 
         var file = _fileSystem.GetFileInfo(specificFile);
@@ -39,6 +37,8 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
             _logger.LogInformation("Found info file of the same name in containing folder {FileName}", file.Name);
             return file;
         }
+
+        var files = _fileSystem.GetFiles(directoryPath);
 
         var infoFiles = files.Where(a => a.Name.EndsWith(".info.json")).ToArray();
 
