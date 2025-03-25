@@ -127,12 +127,14 @@ public class EpisodeIndexer : ILibraryPostScanTask, IScheduledTask {
                     var index_for_date = 0;
                     DateTime? most_recent_date = null;
                     foreach (var episode in episodes) {
-                        if(episode.PremiereDate == most_recent_date) {
-                            index_for_date++;
-                            _logger.LogDebug("Episode [{Name}] already had one aired on the same date; incrementing index to {index_for_date}", episode.Name, index_for_date);
-                        } else {
-                            index_for_date = 0;
-                            most_recent_date = episode.PremiereDate;
+                        if(episode.PremiereDate is DateTime premiere) {
+                            if(most_recent_date is DateTime most_recent && premiere.Date == most_recent.Date) {
+                                index_for_date++;
+                                _logger.LogInformation("Episode [{Name}] already had one aired on the same date; incrementing index to {index_for_date}", episode.Name, index_for_date);
+                            } else {
+                                index_for_date = 0;
+                                most_recent_date = episode.PremiereDate;
+                            }
                         }
 
                         var eindex = (episode.PremiereDate.Value.Month * 1000) + (episode.PremiereDate.Value.Day * 10) + index_for_date;

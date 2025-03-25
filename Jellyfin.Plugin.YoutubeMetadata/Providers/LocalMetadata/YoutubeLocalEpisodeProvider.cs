@@ -10,7 +10,7 @@ public class YoutubeLocalEpisodeProvider : AbstractYoutubeLocalProvider<YoutubeL
 
     public override string Name => Constants.ProviderId;
 
-    internal override MetadataResult<Episode> GetMetadataImpl(YTDLData jsonObj) {
-        return Utils.YTDLJsonToEpisode(jsonObj);
+    internal override MetadataResult<Episode> GetMetadataImpl(YTDLData jsonObj, FileSystemMetadata file) {
+        return Utils.YTDLJsonAndMetadataToEpisode(jsonObj, file);
     }
 }

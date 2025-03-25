@@ -3,6 +3,7 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
+using MediaBrowser.Model.IO;
 using NYoutubeDL;
 using System;
 using System.Collections.Generic;
@@ -278,6 +279,28 @@ public class Utils {
 
         return result;
     }
+
+    /// <summary>
+    /// Provides a Episode Metadata Result from a json object.
+    /// </summary>
+    /// <param name="json"></param>
+    /// <returns></returns>
+    public static MetadataResult<Episode> YTDLJsonAndMetadataToEpisode(YTDLData json, FileSystemMetadata metadata) {
+        var result = YTDLJsonToEpisode(json);
+        if(!result.HasMetadata) {
+            return result;
+        }
+
+        if(result.Item.PremiereDate is DateTime date) {
+            if(date == metadata.LastWriteTimeUtc.Date) {
+                var time_of_day = new TimeSpan(metadata.LastWriteTimeUtc.Hour, metadata.LastWriteTimeUtc.Minute, metadata.LastWriteTimeUtc.Second);
+                result.Item.PremiereDate = date + time_of_day;
+            }
+        }
+
+        return result;
+    }
+
     /// <summary>
     /// Provides a MusicVideo Metadata Result from a json object.
     /// </summary>

@@ -75,7 +75,9 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
         _logger.LogDebug("YTLocal GetMetadata: {Path}", info.Path);
         var result = new MetadataResult<T>();
 
+        var file_metadata = _fileSystem.GetFileInfo(info.Path);
         var infoFile = Path.ChangeExtension(info.Path, "info.json");
+
         if (!File.Exists(infoFile))
         {
             return Task.FromResult(result);
@@ -84,11 +86,11 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
         var jsonObj = Utils.ReadYTDLInfo(infoFile, cancellationToken);
         if (jsonObj != null) {
             _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
-            result = this.GetMetadataImpl(jsonObj);
+            result = this.GetMetadataImpl(jsonObj, file_metadata);
         }
 
         return Task.FromResult(result);
     }
 
-    internal abstract MetadataResult<T> GetMetadataImpl(YTDLData jsonObj);
+    internal abstract MetadataResult<T> GetMetadataImpl(YTDLData jsonObj, FileSystemMetadata file);
 }
