@@ -86,7 +86,7 @@ public class YTDLImageProvider : IRemoteImageProvider, IHasOrder {
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken) {
-        _logger.LogDebug("YTDLImage GetImages: GetImageResponse ", url);
+        _logger.LogDebug("YTDLImage GetImages: GetImageResponse({url})", url);
         var httpClient = Plugin.Instance.GetHttpClient();
         return await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
     }

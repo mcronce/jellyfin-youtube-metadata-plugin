@@ -40,7 +40,7 @@ public class YTDLSeriesProvider : AbstractYoutubeRemoteProvider<YTDLSeriesProvid
         MetadataResult<Series> result = new();
         var name = info.Name;
         if (string.IsNullOrWhiteSpace(name)) {
-            _logger.LogDebug("YTDLSeries GetMetadata: No name found for media: ", info.Path);
+            _logger.LogDebug("YTDLSeries GetMetadata: No name found for media: {Path}", info.Path);
             result.HasMetadata = false;
             return result;
         }
