@@ -16,7 +16,6 @@ public class YoutubeLocalSeasonProvider : ILocalMetadataProvider<Season>, IHasIt
         _logger = logger;
     }
     public Task<MetadataResult<Season>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
-        _logger.LogDebug("YTLocalSeason GetMetadata: {Path}", info.Path);
         MetadataResult<Season> result = new();
         var item = new Season();
         item.Name = Path.GetFileNameWithoutExtension(info.Path);

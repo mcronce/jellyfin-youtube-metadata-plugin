@@ -25,7 +25,6 @@ public class YoutubeLocalSeriesImageProvider : ILocalImageProvider {
     public string Name => Constants.ProviderId;
 
     private string GetSeriesInfo(string path) {
-        _logger.LogDebug("YTLocalImageSeries GetSeriesInfo: {Path}", path);
         Matcher matcher = new();
         matcher.AddInclude("**/*.jpg");
         matcher.AddInclude("**/*.webp");
@@ -37,7 +36,6 @@ public class YoutubeLocalSeriesImageProvider : ILocalImageProvider {
                 break;
             }
         }
-        _logger.LogDebug("YTLocalImageSeries GetSeriesInfo Result: {InfoPath}", infoPath);
         return infoPath;
     }
     /// <summary>
@@ -47,7 +45,6 @@ public class YoutubeLocalSeriesImageProvider : ILocalImageProvider {
     /// <param name="directoryService"></param>
     /// <returns></returns>
     public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) {
-        _logger.LogDebug("YTLocalImageSeries GetImages: {Name}", item.Name);
         var list = new List<LocalImageInfo>();
         string jpgPath = GetSeriesInfo(item.Path);
         if (String.IsNullOrEmpty(jpgPath)) {
@@ -57,7 +54,6 @@ public class YoutubeLocalSeriesImageProvider : ILocalImageProvider {
         var fileInfo = _fileSystem.GetFileSystemInfo(jpgPath);
         localimg.FileInfo = fileInfo;
         list.Add(localimg);
-        _logger.LogDebug("YTLocalImageSeries GetImages Result: {Result}", list.ToString());
         return list;
     }
 

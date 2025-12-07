@@ -27,7 +27,6 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
 
     public int Order => 1;
     private string GetSeriesInfo(string ytID, string path) {
-        _logger.LogDebug("YTLocalImage GetSeriesInfo: {Path}", path);
         Matcher matcher = new();
         Regex rx = new Regex(Constants.YTID_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         matcher.AddInclude("*.jpg");
@@ -35,7 +34,6 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
         foreach (string file in matcher.GetResultsInFullPath(path)) {
             var match = rx.Match(file);
             if (match.Success && match.Value == ytID) {
-                _logger.LogDebug("YTLocalImage GetSeriesInfo Result: {file}", file);
                 return file;
             }
         }
@@ -48,7 +46,6 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
     /// <param name="directoryService"></param>
     /// <returns></returns>
     public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) {
-        _logger.LogDebug("YTLocalImage GetImages: {Name}", item.Name);
         var list = new List<LocalImageInfo>();
         var id = Utils.GetYTID(item.FileNameWithoutExtension);
         string jpgPath = GetSeriesInfo(id, item.ContainingFolderPath);

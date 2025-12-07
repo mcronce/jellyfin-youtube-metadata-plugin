@@ -24,7 +24,6 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
     }
 
     protected FileSystemMetadata GetInfoJson(string path) {
-        _logger.LogDebug("YTLocal GetInfoJson: {Path}", path);
         var fileInfo = _fileSystem.GetFileSystemInfo(path);
         var directoryInfo = fileInfo.IsDirectory ? fileInfo : _fileSystem.GetDirectoryInfo(Path.GetDirectoryName(path));
         var directoryPath = directoryInfo.FullName;
@@ -72,7 +71,6 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public Task<MetadataResult<T>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
-        _logger.LogDebug("YTLocal GetMetadata: {Path}", info.Path);
         var result = new MetadataResult<T>();
 
         var file_metadata = _fileSystem.GetFileInfo(info.Path);
@@ -85,7 +83,6 @@ public abstract class AbstractYoutubeLocalProvider<B, T> : ILocalMetadataProvide
 
         var jsonObj = Utils.ReadYTDLInfo(infoFile, cancellationToken);
         if (jsonObj != null) {
-            _logger.LogDebug("YTLocal GetMetadata Result: {JSON}", jsonObj.ToString());
             result = this.GetMetadataImpl(jsonObj, file_metadata);
         }
 

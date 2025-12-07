@@ -23,20 +23,17 @@ public class YoutubeLocalSeriesProvider : ILocalMetadataProvider<Series>, IHasIt
     public string Name => Constants.ProviderId;
 
     private string GetSeriesInfo(string path) {
-        _logger.LogDebug("YTLocalSeries GetSeriesInfo: {Path}", path);
         Matcher matcher = new();
         matcher.AddInclude("**/*.info.json");
         Regex rx = new Regex(Constants.YTCHANNEL_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         foreach (string file in matcher.GetResultsInFullPath(path)) {
             if (rx.IsMatch(file)) {
-                _logger.LogDebug("YTLocalSeries GetSeriesInfo Result: {file}", file);
                 return file;
             }
         }
         return null;
     }
     public Task<MetadataResult<Series>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
-        _logger.LogDebug("YTLocalSeries GetMetadata: {Path}", info.Path);
         MetadataResult<Series> result = new();
         string infoPath = GetSeriesInfo(info.Path);
         if (String.IsNullOrEmpty(infoPath)) {
@@ -44,7 +41,6 @@ public class YoutubeLocalSeriesProvider : ILocalMetadataProvider<Series>, IHasIt
         }
         var infoJson = Utils.ReadYTDLInfo(infoPath, cancellationToken);
         result = Utils.YTDLJsonToSeries(infoJson);
-        _logger.LogDebug("YTLocalSeries GetMetadata Result: {Result}", result);
         return Task.FromResult(result);
     }
     FileSystemMetadata GetInfoJson(string path) {
@@ -56,14 +52,12 @@ public class YoutubeLocalSeriesProvider : ILocalMetadataProvider<Series>, IHasIt
         return file;
     }
     public bool HasChanged(BaseItem item, IDirectoryService directoryService) {
-        _logger.LogDebug("YTLocalSeries HasChanged: {Path}", item.Path);
         var infoPath = GetSeriesInfo(item.Path);
         var result = false;
         if (!String.IsNullOrEmpty(infoPath)) {
             var infoJson = GetInfoJson(infoPath);
             result = infoJson.Exists && _fileSystem.GetLastWriteTimeUtc(infoJson) < item.DateLastSaved;
         }
-        _logger.LogDebug("YTLocalSeries HasChanged Result: {Result}", result);
         return result;
 
     }
