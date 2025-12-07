@@ -32,16 +32,14 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
         Regex rx = new Regex(Constants.YTID_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         matcher.AddInclude("*.jpg");
         matcher.AddInclude("*.webp");
-        string infoPath = "";
         foreach (string file in matcher.GetResultsInFullPath(path)) {
             var match = rx.Match(file);
             if (match.Success && match.Value == ytID) {
-                infoPath = file;
-                break;
+                _logger.LogDebug("YTLocalImage GetSeriesInfo Result: {file}", file);
+                return file;
             }
         }
-        _logger.LogDebug("YTLocalImage GetSeriesInfo Result: {InfoPath}", infoPath);
-        return infoPath;
+        return null;
     }
     /// <summary>
     /// Retrieves Image.
@@ -54,10 +52,12 @@ public class YoutubeLocalImageProvider : ILocalImageProvider, IHasOrder {
         var list = new List<LocalImageInfo>();
         var id = Utils.GetYTID(item.FileNameWithoutExtension);
         string jpgPath = GetSeriesInfo(id, item.ContainingFolderPath);
-        var localimg = new LocalImageInfo();
-        var fileInfo = _fileSystem.GetFileSystemInfo(jpgPath);
-        localimg.FileInfo = fileInfo;
-        list.Add(localimg);
+        if(jpgPath != null) {
+            var localimg = new LocalImageInfo();
+            var fileInfo = _fileSystem.GetFileSystemInfo(jpgPath);
+            localimg.FileInfo = fileInfo;
+            list.Add(localimg);
+        }
         return list;
     }
 
