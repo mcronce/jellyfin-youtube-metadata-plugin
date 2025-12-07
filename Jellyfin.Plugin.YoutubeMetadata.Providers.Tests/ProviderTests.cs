@@ -138,7 +138,7 @@ public class YTDLEpisodeProviderTest {
                         ProductionYear = 2021,
                         PremiereDate   = DateTime.ParseExact("20211215", "yyyyMMdd", null)
                     },
-                    People = new() {new() {
+                    People = new List<PersonInfo> {new() {
                         Name = "ankenyr",
                         Type = PersonKind.Director,
                         ProviderIds = new() { { "YoutubeMetadata", "abc123" } } }
@@ -167,7 +167,7 @@ public class YTDLEpisodeProviderTest {
                         ProductionYear = 2021,
                         PremiereDate   = DateTime.ParseExact("20211215", "yyyyMMdd", null)
                     },
-                    People = new() {new() {
+                    People = new List<PersonInfo> {new() {
                         Name = "ankenyr",
                         Type = PersonKind.Director,
                         ProviderIds = new() { { "YoutubeMetadata", "abc123" } } }
@@ -204,7 +204,7 @@ public class YTDLEpisodeProviderTest {
                         ProductionYear = 2021,
                         PremiereDate   = DateTime.ParseExact("20211215", "yyyyMMdd", null)
                     },
-                    People = new() {
+                    People = new List<PersonInfo> {
                         new() {
                             Name = "ankenyr",
                             Type = PersonKind.Director,
