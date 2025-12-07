@@ -27,15 +27,13 @@ public class YoutubeLocalSeriesProvider : ILocalMetadataProvider<Series>, IHasIt
         Matcher matcher = new();
         matcher.AddInclude("**/*.info.json");
         Regex rx = new Regex(Constants.YTCHANNEL_RE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        string infoPath = "";
         foreach (string file in matcher.GetResultsInFullPath(path)) {
             if (rx.IsMatch(file)) {
-                infoPath = file;
-                break;
+                _logger.LogDebug("YTLocalSeries GetSeriesInfo Result: {file}", file);
+                return file;
             }
         }
-        _logger.LogDebug("YTLocalSeries GetSeriesInfo Result: {InfoPath}", infoPath);
-        return infoPath;
+        return null;
     }
     public Task<MetadataResult<Series>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) {
         _logger.LogDebug("YTLocalSeries GetMetadata: {Path}", info.Path);
