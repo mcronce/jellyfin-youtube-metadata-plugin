@@ -248,6 +248,7 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
+<<<<<<< HEAD
 # SQL Server files
 *.mdf
 *.ldf
@@ -344,3 +345,8 @@ healthchecksdb
 
 # vscode
 .vscode/
+
+# MonoDevelop metafiles
+MediaBrowser.Plugins.Anime.userprefs
+
+.venv
