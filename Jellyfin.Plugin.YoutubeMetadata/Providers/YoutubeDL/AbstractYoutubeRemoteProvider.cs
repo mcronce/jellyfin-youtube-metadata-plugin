@@ -94,6 +94,12 @@ public abstract class AbstractYoutubeRemoteProvider<B, T, E> : IRemoteMetadataPr
             _logger.LogDebug("YTDL GetMetadata: Not Fresh: {ID}", id);
             await this.GetAndCacheMetadata(id, this._config.ApplicationPaths, cancellationToken);
         }
+        var fileInfoAfterCache = _fileSystem.GetFileSystemInfo(ytPath);
+        if (!fileInfoAfterCache.Exists)
+        {
+            _logger.LogWarning("YTDL GetSearchResults: Info file not found for ID={ID}", id);
+            return result;
+        }
         var video = Utils.ReadYTDLInfo(ytPath, cancellationToken);
         if (video != null) {
             _logger.LogDebug("YTDL GetMetadata: Calling Impl function: {ID}", id);
